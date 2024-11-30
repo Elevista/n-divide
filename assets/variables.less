@@ -1,0 +1,18 @@
+.fixed-full() {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  top: 0;
+  bottom: env(safe-area-inset-bottom, 0);
+}
+
+.clamp(@lines, @line-height:1.4){
+  max-width: 100%; max-height: @line-height*@lines*1em;
+  overflow: hidden;
+  line-height: @line-height;
+  /* autoprefixer: off */
+  display:-webkit-box; -webkit-line-clamp: @lines; -webkit-box-orient: vertical;
+}
+
+@smooth-curve: cubic-bezier(.36, .66, .04, 1);
