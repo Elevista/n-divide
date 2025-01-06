@@ -89,6 +89,11 @@ const pie = computed(() => store.items.length && ({
         <QItemSection><QItemLabel>차액</QItemLabel></QItemSection>
         <QItemSection side><QItemLabel>{{ intFormat(sum.n - sum.all) }}원</QItemLabel></QItemSection>
       </QItem>
+      <QItem v-if="store.people.length && sum.all > 0" class="fd-c ai-c">
+        <a href="https://link.kakaopay.com/_/rCXu4ox" target="_blank" class="flex">
+          <img src="../assets/btn_request_small.png">
+        </a>
+      </QItem>
     </QList>
     <QCardActions align="right" class="mt-a">
       <QBtn flat label="확인" color="primary" @click="back" />
