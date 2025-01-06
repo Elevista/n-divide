@@ -14,9 +14,8 @@ if (localStorage.store) {
 }
 onMounted(() => {
   window.addEventListener('beforeunload', () => { localStorage.store = stringify(store) })
-  window.addEventListener('blur', () => {
-    if (document.visibilityState === 'hidden') localStorage.store = stringify(store)
-  })
+  window.addEventListener('visibilitychange', () => { localStorage.store = stringify(store) })
+  window.addEventListener('blur', () => { localStorage.store = stringify(store) })
 })
 </script>
 <template>
