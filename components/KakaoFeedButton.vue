@@ -1,8 +1,8 @@
 <script lang="ts" setup>
-import type { QBtn } from 'quasar'
+import { type QBtn } from 'quasar'
 const qBtn = ref<QBtn | null>(null)
 const props = withDefaults(defineProps<{ content: DefaultFeedSettings['itemContent'], title?: string, description?: string }>(), { title: '정산 요청 드려요!', description: '' })
-const webUrl = 'https://elevista.github.io/n-divide'
+const shareUrl = computed(() => getShareUrl(useSimpleData()))
 const share = () => loadKakaoSdk().then(Kakao => Kakao.Share.sendDefault({
   objectType: 'feed',
   content: {
@@ -10,10 +10,10 @@ const share = () => loadKakaoSdk().then(Kakao => Kakao.Share.sendDefault({
     description: props.description,
     imageUrl: 'https://elevista.github.io/n-divide/icons/icon-512-maskable.png',
     imageHeight: 230,
-    link: { webUrl, mobileWebUrl: webUrl },
+    link: { webUrl: shareUrl.value, mobileWebUrl: shareUrl.value },
   },
-  buttonTitle: '나도 해보기',
   itemContent: props.content,
+  ...!shareUrl.value.includes('?') && { buttonTitle: '나도 해보기' },
 }))
 </script>
 

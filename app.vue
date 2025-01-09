@@ -17,6 +17,8 @@ onMounted(() => {
   window.addEventListener('visibilitychange', () => { localStorage.store = stringify(store) })
   window.addEventListener('blur', () => { localStorage.store = stringify(store) })
 })
+if (!store.showResult && useRoute().query.data) store.showResult = true
+
 </script>
 <template>
   <Transition>
