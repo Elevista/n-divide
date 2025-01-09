@@ -19,6 +19,7 @@ export const useStore = () => useState(() => {
     draggingN: undefined as N|undefined,
     editMode: false,
     showResult: false,
+    accountInfo: '',
   }
 }).value
 

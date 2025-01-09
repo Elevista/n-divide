@@ -10,12 +10,24 @@ const items = computed(() => store.items.flatMap(item => {
   const sum = intFormat((price * item.count) * (count / n.length))
   return { ...item, sum }
 }))
+// const nim = computed(() => /님(?=[^\p{L}\w])/u.test(name.value) ? '' : '님')
 </script>
 
 <template>
   <QExpansionItem :expand-separator="expandSeparator" :content-inset-level="1">
     <template #header>
-      <QItemSection><QItemLabel>{{ name }}</QItemLabel></QItemSection>
+      <QItemSection>
+        <QItemLabel class="fd-r ai-c">
+          {{ name }}
+          <KakaoFeedButton v-if="items.length" class="w-[20px] h-[20px]"
+                           :description="store.accountInfo"
+                           :content="{
+                             profileText: `To. ${name}`,
+                             items: items.map(x => ({itemOp: x.sum +'원',item: x.name})),
+                             sum:'합계', sumOp: sum + '원',
+                           }" />
+        </QItemLabel>
+      </QItemSection>
       <QItemSection side><QItemLabel class="selectable">{{ sum }}원</QItemLabel></QItemSection>
     </template>
     <QItem v-for="item of items" :key="item.id">
