@@ -26,9 +26,9 @@ const touchstart = (e: TouchEvent) => {
   const firstChild = div.value?.firstElementChild
   if (!firstChild) return
   const el = clone.value = firstChild.cloneNode(true) as HTMLElement
-  document.body.appendChild(clone.value)
+  document.body.appendChild(el)
   el.addEventListener('contextmenu', e => e.preventDefault())
-  assignIn(clone.value.style, { zIndex: '1', position: 'fixed', margin: '0', opacity: '0.8', pointerEvents: 'none' })
+  assignIn(el.style, { zIndex: '1', position: 'fixed', margin: '0', opacity: '0.8', pointerEvents: 'none' })
   requestAnimationFrame(() => {
     const { left, top } = firstChild.getBoundingClientRect()
     assignIn(el.style, { left: `${left}px`, top: `${top}px` })
@@ -71,8 +71,14 @@ const remove = () => {
   clone.value?.remove()
   clone.value = undefined
 }
-onMounted(() => { window.addEventListener('blur', remove) })
-onUnmounted(() => { window.removeEventListener('blur', remove) })
+onMounted(() => {
+  window.addEventListener('blur', remove)
+  window.addEventListener('visibilitychange', remove)
+})
+onUnmounted(() => {
+  window.removeEventListener('blur', remove)
+  window.removeEventListener('visibilitychange', remove)
+})
 
 </script>
 <template>
