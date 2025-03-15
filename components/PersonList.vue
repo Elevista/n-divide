@@ -10,9 +10,43 @@ const addPerson = (shouldContinue = false) => {
   if (!shouldContinue) showPerson.value = false
   q.notify({ message: '추가 되었습니다.', position: shouldContinue ? 'top' : 'bottom' })
 }
+const state = reactive({ moved: 0, bottom: 0, resizing: false })
+let lastClientY = 0, min = 0
+const move = (e: PointerEvent) => {
+  state.moved -= e.clientY - lastClientY
+  lastClientY = e.clientY
+  if (state.moved < min) state.bottom = min
+  else if (state.moved > 0) state.bottom = 0
+  else state.bottom = state.moved
+}
+const clear = () => {
+  window.removeEventListener('pointermove', move)
+  state.resizing = false
+}
+const resizeStart = (e: PointerEvent) => {
+  const { clientHeight, scrollHeight } = document.scrollingElement!
+  min = clientHeight - scrollHeight
+  lastClientY = e.clientY
+  state.moved = state.bottom
+  state.resizing = true
+  window.addEventListener('pointermove', move)
+  window.addEventListener('pointerup', clear, { once: true })
+  window.addEventListener('pointercancel', clear, { once: true })
+}
+
+onUnmounted(() => {
+  window.removeEventListener('pointermove', move)
+  window.removeEventListener('pointerup', clear)
+  window.removeEventListener('pointercancel', clear)
+})
+
+const bottom = computed(() => `${state.bottom}px`)
+const { resizing } = toRefs(state)
 </script>
 <template>
-  <QList bordered separator class="mt-a p-s bottom-0 bc-fff">
+  <QList bordered separator class="mt-a p-s bc-fff" :class="{resizing}"
+         :style="{bottom}">
+    <div class="h-4 mt--2 mb--2 c-nsr ta-n" @pointerdown.prevent.stop="resizeStart" />
     <QItemLabel header class="fd-r">
       인원
       <QBtn flat round dense icon="person_add"
@@ -47,13 +81,8 @@ const addPerson = (shouldContinue = false) => {
   </QDialog>
 </template>
 <style scoped lang='less'>
-.container {
-  display: grid;
-
-  height: 400px; /* 부모 높이 설정 */
-  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-  overflow: hidden; /* 부모의 높이를 넘는 자식은 숨김 */
-  gap:0;
+.resizing * {
+  transition: none !important;
 }
 
 .item {

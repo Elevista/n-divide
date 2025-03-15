@@ -59,6 +59,7 @@ export default defineConfig({
     ['td-lt', { 'text-decoration': 'line-through' }],
     ['zi-1', { 'z-index': '1' }],
     ['c-p', { cursor: 'pointer' }],
+    ['c-nsr', { cursor: 'ns-resize' }],
     ['o-a', { overflow: 'auto' }],
     ['ox-a', { 'overflow-x': 'auto' }],
     ['p-s', { position: 'sticky' }],
