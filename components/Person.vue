@@ -3,6 +3,7 @@ const props = defineProps<{ person: Person }>()
 const store = useStore()
 const n = computed(() => props.person.n.slice().sort((a, b) => a.item.id - b.item.id))
 const removePerson = () => {
+  notifyUndo('삭제 되었습니다.')
   const n = props.person.n.slice()
   removeItem(store.people, x => x.id === props.person.id)
   n.forEach(n => { n.who = undefined })

@@ -1,3 +1,5 @@
+import { parse, stringify } from 'flatted'
+
 // eslint-disable-next-line no-use-before-define
 export type N = {id: number, who?: Person, item: Item}
 export type Item = {
@@ -25,7 +27,10 @@ export const useStore = () => useState(() => {
 
 export const giveToPerson = (person: Person, n = useStore().draggingN) => {
   if (!n) return
-  if (n.who) removeItem(n.who.n, x => x.id === n.id)
+  if (n.who) {
+    if (n.who !== person) notifyUndo('이동 되었습니다.')
+    removeItem(n.who.n, x => x.id === n.id)
+  }
   n.who = person
   person.n.push(n)
 }
@@ -65,3 +70,12 @@ export const useSimpleData = (): SimpleData => reactive({
     }),
   })).filter(x => x.items.filter(x => x.sum).length)),
 })
+
+export const notifyUndo = (message: string) => {
+  const store = useStore(), data = stringify(store)
+  Notify.create({
+    message,
+    timeout: 2000,
+    actions: [{ label: '되돌리기', handler: () => { Object.assign(store, parse(data)) } }],
+  })
+}

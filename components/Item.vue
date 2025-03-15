@@ -7,6 +7,7 @@ const totalPrice = computed(() => state.price * state.count)
 const appearItems = computed(() => state.n.filter(x => !x.who))
 
 const remove = () => {
+  notifyUndo('삭제 되었습니다.')
   const { item } = props
   item.n.slice().forEach(deleteN)
   removeItem(store.items, x => x.id === item.id)
