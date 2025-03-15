@@ -1,11 +1,10 @@
 <script lang="ts" setup>
 const store = useStore(), q = useQuasar()
-const { people } = store
 const showPerson = ref(false)
-const person = reactive<Person>({ name: '', id: NaN, n: [] })
+const person = reactive({ name: '' } satisfies Pick<Person, 'name'>)
 const addPerson = (shouldContinue = false) => {
   if (!person.name) return
-  store.people.push({ name: person.name, id: genId(), n: [] })
+  store.people.push({ ...person, id: genId() })
   person.name = ''
   if (!shouldContinue) showPerson.value = false
   q.notify({ message: '추가 되었습니다.', position: shouldContinue ? 'top' : 'bottom' })
@@ -42,6 +41,7 @@ onUnmounted(() => {
 
 const bottom = computed(() => `${state.bottom}px`)
 const { resizing } = toRefs(state)
+const people = toRef(() => store.people)
 </script>
 <template>
   <QList bordered separator class="mt-a p-s bc-fff" :class="{resizing}"

@@ -1,17 +1,17 @@
 <script lang="ts" setup>
 const props = defineProps<{ n: N, draggable?: boolean }>()
-const n = reactive(props.n), store = useStore()
-const item = reactive(props.n.item)
-const itemPrice = computed(() => numberFormat(Math.ceil((item.price * item.count) / item.n.length)))
+const store = useStore()
+const item = computed(() => store.items.find(x => x.id === props.n.itemId) ?? store.items[0])
+const itemPrice = computed(() => numberFormat(Math.ceil((item.value.price * item.value.count) / item.value.n.length)))
 
 const dragstart = (e: DragEvent) => {
-  store.draggingN = n
+  store.draggingN = props.n
   if (e.dataTransfer) e.dataTransfer.effectAllowed = 'move'
 }
 
 const editMode = toRef(store, 'editMode')
 
-const color = computed(() => getColor(store.items.findIndex(x => x.id === item.id)))
+const color = computed(() => getColor(store.items.findIndex(x => x.id === item.value.id)))
 </script>
 
 <template>
@@ -24,7 +24,7 @@ const color = computed(() => getColor(store.items.findIndex(x => x.id === item.i
            :removable="editMode" icon="local_pizza"
            class="p-r ta-n" :class="editMode&&'shake'"
            @remove="deleteN(n)" v-on="listeners">
-      {{ n.item.name }}
+      {{ item.name }}
       <QBadge v-if="!editMode" color="red" floating transparent>{{ itemPrice }}</QBadge>
     </QChip>
   </TouchDraggable>

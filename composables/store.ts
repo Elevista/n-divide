@@ -1,7 +1,6 @@
 import { parse, stringify } from 'flatted'
 
-// eslint-disable-next-line no-use-before-define
-export type N = {id: number, who?: Person, item: Item}
+export type N = {id: number, personId?: number, itemId: number}
 export type Item = {
   count: number,
   n: N[],
@@ -9,7 +8,7 @@ export type Item = {
   name: string,
   id: number,
 }
-export type Person = { name: string, id: number, n: N[] }
+export type Person = { name: string, id: number }
 
 export const useStore = () => useState(() => {
   const people: Person[] = []
@@ -27,24 +26,17 @@ export const useStore = () => useState(() => {
 
 export const giveToPerson = (person: Person, n = useStore().draggingN) => {
   if (!n) return
-  if (n.who) {
-    if (n.who !== person) notifyUndo('이동 되었습니다.')
-    removeItem(n.who.n, x => x.id === n.id)
-  }
-  n.who = person
-  person.n.push(n)
+  if (n.personId && n.personId !== person.id) notifyUndo('이동 되었습니다.')
+  n.personId = person.id
 }
 
 export const removeNFromPerson = (n = useStore().draggingN) => {
-  if (!n?.who) return
-  removeItem(n.who.n, x => x.id === n.id)
-  n.who = undefined
+  if (n) n.personId = undefined
 }
 
 export const deleteN = (n: N) => {
-  const item = n.item
-  if (n.who) removeItem(n.who.n, x => x.id === n.id)
-  removeItem(item.n, x => x.id === n.id)
+  const item = useStore().items.find(x => x.id === n.itemId)
+  if (item) removeItem(item.n, x => x.id === n.id)
 }
 
 export type SimpleData = {
@@ -63,7 +55,7 @@ export const useSimpleData = (): SimpleData => reactive({
     name: person.name,
     items: useStore().items.flatMap(item => {
       const { n, price, name } = item
-      const count = n.filter(x => x.who?.id === person.id).length
+      const count = n.filter(x => x.personId === person.id).length
       if (!count) return { name, sum: 0 }
       const sum = ((price * item.count) * (count / n.length))
       return { name, sum }

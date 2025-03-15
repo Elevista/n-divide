@@ -1,10 +1,10 @@
 <script lang="ts" setup>
 const props = defineProps<{ editMode?: boolean, item: Item }>()
-const state = reactive(props.item), store = useStore(), show = ref(false)
+const store = useStore(), show = ref(false)
 const editMode = toRef(store, 'editMode')
 
-const totalPrice = computed(() => state.price * state.count)
-const appearItems = computed(() => state.n.filter(x => !x.who))
+const totalPrice = computed(() => props.item.price * props.item.count)
+const appearItems = computed(() => props.item.n.filter(x => !x.personId))
 
 const remove = () => {
   notifyUndo('삭제 되었습니다.')
@@ -12,13 +12,11 @@ const remove = () => {
   item.n.slice().forEach(deleteN)
   removeItem(store.items, x => x.id === item.id)
 }
-
-const { name, n, count } = toRefs(state)
 </script>
 <template>
   <div>
     <QItemLabel header class="flex ai-c">
-      <button type="button" class="c-i" @click="show=true">{{ name }}</button>
+      <button type="button" class="c-i" @click="show=true">{{ item.name }}</button>
       <QBtn v-if="editMode" flat round icon="edit"
             dense size="sm" @click="show=true" />
     </QItemLabel>
@@ -26,15 +24,16 @@ const { name, n, count } = toRefs(state)
       <QItem>
         <QItemSection :class="!appearItems.length&&'td-lt'">
           <QItemLabel caption class="flex ai-c">
-            <button type="button" class="c-i" @click="show=true">{{ numberFormat(totalPrice) }}원({{ numberFormat(count) }}개)</button> &nbsp;/ {{ numberFormat(n.length) }}분할
+            <button type="button" class="c-i" @click="show=true">{{ numberFormat(totalPrice) }}원({{ numberFormat(item.count) }}개)</button> &nbsp;/ {{ numberFormat(item.n.length) }}분할
           </QItemLabel>
           <QItemLabel v-if="appearItems.length">
-            <Flip class="fd-r fw-w"><Pie v-for="x of appearItems" :key="x.id" :n="x" :draggable="!x.who" /></Flip>
+            <Flip class="fd-r fw-w"><Pie v-for="x of appearItems" :key="x.id" :n="x" :draggable="!x.personId" /></Flip>
           </QItemLabel>
         </QItemSection>
 
         <QItemSection side class="fd-r">
-          <QBtn flat round @click="n.push({id:genId(),item:props.item})">¹/ₙ</QBtn>
+          <!-- eslint-disable-next-line vue/no-mutating-props -->
+          <QBtn flat round @click="item.n.push({ id: genId(), itemId: item.id })">¹/ₙ</QBtn>
         </QItemSection>
       </QItem>
       <template #right><QIcon name="delete" /></template>

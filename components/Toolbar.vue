@@ -7,7 +7,7 @@ const sequenceAllocator = () => {
   if (!store.people.length) return q.notify('인원이 없습니다.')
   let gave = 0
   for (const item of store.items) {
-    const n = item.n.filter(x => !x.who)
+    const n = item.n.filter(x => !x.personId)
     for (let i = 0; i < n.length; i++) {
       const person = store.people[i % store.people.length]
       giveToPerson(person, n[i])
@@ -23,7 +23,7 @@ const generateNBasedOnPerson = () => {
   for (const item of store.items) {
     if (item.n.length >= length) continue
     for (let i = item.n.length; i < length; i++) {
-      item.n.push({ id: genId(), item })
+      item.n.push({ id: genId(), itemId: item.id })
       gen++
     }
   }
@@ -34,7 +34,7 @@ const generateNBasedOnCount = () => {
   let gen = 0
   for (const item of store.items) {
     for (let i = item.n.length; i < item.count; i++) {
-      item.n.push({ id: genId(), item })
+      item.n.push({ id: genId(), itemId: item.id })
       gen++
     }
   }

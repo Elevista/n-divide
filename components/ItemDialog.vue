@@ -44,7 +44,7 @@ const addItem = (shouldContinue = false) => {
     id: genId(),
     n: [],
   }
-  newItem.n = [{ id: genId(), item: newItem }]
+  newItem.n = [{ id: genId(), itemId: newItem.id }]
   store.items.push(newItem)
   form.name = ''
   form.count = 1
